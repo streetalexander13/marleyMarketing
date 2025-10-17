@@ -85,7 +85,7 @@ const animateElements = document.querySelectorAll(
 animateElements.forEach((el, index) => {
     el.style.opacity = '0';
     el.style.transform = 'translateY(30px)';
-    el.style.transition = `all 0.6s cubic-bezier(0.4, 0, 0.2, 1) ${index * 0.1}s`;
+    el.style.transition = `all 0.4s cubic-bezier(0.4, 0, 0.2, 1) ${index * 0.05}s`;
     observer.observe(el);
 });
 
@@ -331,21 +331,56 @@ function showNotification(message, type = 'success') {
 }
 
 // ===================================
-// Parallax Effect for Hero Orbs
+// 3D Shapes Parallax Effect
 // ===================================
 
-window.addEventListener('mousemove', (e) => {
-    const orbs = document.querySelectorAll('.gradient-orb');
-    const mouseX = e.clientX / window.innerWidth;
-    const mouseY = e.clientY / window.innerHeight;
-    
-    orbs.forEach((orb, index) => {
-        const speed = (index + 1) * 20;
-        const x = (mouseX - 0.5) * speed;
-        const y = (mouseY - 0.5) * speed;
+// Mouse move parallax (only on desktop)
+if (window.innerWidth > 768) {
+    window.addEventListener('mousemove', (e) => {
+        const shapes = document.querySelectorAll('.shape-3d');
+        const mouseX = e.clientX / window.innerWidth;
+        const mouseY = e.clientY / window.innerHeight;
         
-        orb.style.transform = `translate(${x}px, ${y}px)`;
+        shapes.forEach((shape, index) => {
+            const speed = (index + 1) * 15;
+            const x = (mouseX - 0.5) * speed;
+            const y = (mouseY - 0.5) * speed;
+            
+            shape.style.transform = `translate(${x}px, ${y}px) rotate(${x * 0.5}deg)`;
+        });
+        
+        // Hero orbs
+        const orbs = document.querySelectorAll('.gradient-orb');
+        orbs.forEach((orb, index) => {
+            const speed = (index + 1) * 20;
+            const x = (mouseX - 0.5) * speed;
+            const y = (mouseY - 0.5) * speed;
+            
+            orb.style.transform = `translate(${x}px, ${y}px)`;
+        });
     });
+}
+
+// Scroll parallax
+let ticking = false;
+
+window.addEventListener('scroll', () => {
+    if (!ticking) {
+        window.requestAnimationFrame(() => {
+            const scrolled = window.pageYOffset;
+            const shapes = document.querySelectorAll('.shape-3d');
+            
+            shapes.forEach((shape, index) => {
+                const speed = (index + 1) * 0.3;
+                const yPos = -(scrolled * speed);
+                shape.style.transform = `translateY(${yPos}px)`;
+            });
+            
+            ticking = false;
+        });
+        
+        ticking = true;
+    }
 });
 
 // ===================================
